@@ -1,0 +1,114 @@
+
+
+#ifndef SPROOF_UTILS_CONFIG_H_IN
+#define SPROOF_UTILS_CONFIG_H_IN
+
+#include <iostream>
+#include <stdexcept>
+#include <string>
+#include <algorithm>
+
+#define ASSERT_EQUAL( x, y )                                  \
+{                                                                   \
+  if( ( x ) != ( y ) )                                              \
+  {                                                                 \
+    throw std::runtime_error(   std::string( __FILE__ )             \
+                              + std::string( ":" )                  \
+                              + std::to_string( __LINE__ )          \
+                              + std::string( " in " )               \
+                              + std::string( __PRETTY_FUNCTION__ )  \
+                              + std::string( ": " )                 \
+                              + std::to_string( ( x ) )             \
+                              + std::string( " != " )               \
+                              + std::to_string( ( y ) )             \
+    );                                                              \
+  }                                                                 \
+}
+
+#define ASSERT_STRING_EQUAL( x, y )                                  \
+{                                                                   \
+  if( ( x ) != ( y ) )                                              \
+  {                                                                 \
+    throw std::runtime_error(   std::string( __FILE__ )             \
+                              + std::string( ":" )                  \
+                              + std::to_string( __LINE__ )          \
+                              + std::string( " in " )               \
+                              + std::string( __PRETTY_FUNCTION__ )  \
+                              + std::string( ": " )                 \
+                              + ( x )             \
+                              + std::string( " != " )               \
+                              + ( y )             \
+    );                                                              \
+  }                                                                 \
+}
+
+
+#define ASSERT_THROW( condition )                             \
+{                                                                   \
+  if( !( condition ) )                                              \
+  {                                                                 \
+    throw std::runtime_error(   std::string( __FILE__ )             \
+                              + std::string( ":" )                  \
+                              + std::to_string( __LINE__ )          \
+                              + std::string( " in " )               \
+                              + std::string( __PRETTY_FUNCTION__ )  \
+    );                                                              \
+  }                                                                 \
+}
+
+#define EXPECT_EXCEPTION( expression, exception )             \
+{                                                                   \
+  try                                                               \
+  {                                                                 \
+    ( expression );                                                 \
+  }                                                                 \
+  catch( exception& e )                                             \
+  {                                                                 \
+  }                                                                 \
+  catch( ... )                                                      \
+  {                                                                 \
+    throw std::runtime_error(   std::string( __FILE__ )             \
+                              + std::string( ":" )                  \
+                              + std::to_string( __LINE__ )          \
+                              + std::string( " in " )               \
+                              + std::string( __PRETTY_FUNCTION__ )  \
+    );                                                              \
+  }                                                                 \
+}
+
+#define TEST_BEGIN( name )\
+{\
+  std::cerr << "-- Running test \"" << name << "\"...";\
+}
+
+#define TEST_END() \
+{\
+  std::cerr << "finished\n";\
+}
+
+
+std::string str_tolower(std::string s) {
+    std::transform(s.begin(), s.end(), s.begin(),
+            [](unsigned char c){ return std::tolower(c); }
+    );
+    return s;
+}
+
+bool is_hex(const std::string& input) {
+    std::string str = input;
+    if (str.compare(0, 2, "0x") == 0)
+        str = str.substr(2);
+
+    const char *cstr = str.c_str();
+    while (*cstr != '\0') {
+        if ((*cstr >= '0' && *cstr <= '9') || (*cstr >= 'A' && *cstr <= 'F') || (*cstr >= 'a' && *cstr <= 'f')) {
+            cstr++;
+            continue;
+        }
+        else
+            return false;
+    }
+    return true;
+}
+
+#endif //SPROOF_UTILS_CONFIG_H_IN
